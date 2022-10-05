@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Evaluación Experimental</title>
+    <meta charset="utf-8" />
+    <meta name="date" content="2022-10-05" />
+    <script src="libs/header-attrs-2.16/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+    <script src="libs/kePrint-0.0.1/kePrint.js"></script>
+    <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap-grid.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.rawgit.com/jpswalsh/academicons/master/css/academicons.min.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+class: title-slide, inverse, center, middle
+
+
+
+&lt;style type="text/css"&gt;
+.huge .remark-code { /*Change made here*/
+  font-size: 200% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 60% !important;
+}
+&lt;/style&gt;
+
+.title[
+# Uso de R para la evaluación de impacto
+]
+.subtitle[
+### Una aplicación del Proyecto Esperanza en Oaxaca
+]
+&lt;br/&gt;
+
+.author[
+### Irvin Rojas &lt;br&gt; [rojasirvin.com](https://www.rojasirvin.com/) &lt;br&gt; [&lt;i class="fab fa-github"&gt;&lt;/i&gt;](https://github.com/rojasirvin) [&lt;i class="fab fa-twitter"&gt;&lt;/i&gt;](https://twitter.com/RojasIrvin) [&lt;i class="ai ai-google-scholar"&gt;&lt;/i&gt;](https://scholar.google.com/citations?user=FUwdSTMAAAAJ&amp;hl=en)
+]
+
+&lt;br/&gt;
+
+.affiliation[
+### Centro de Investigación y Docencia Económicas &lt;br&gt; División de Economía  &lt;br&gt;  &lt;br&gt; Actualización: 2022-10-05
+]
+
+**Simposio – Taller _Uso y aplicación de R en estudios sociales, económicos y de innovación_**
+
+---
+
+.center[
+&lt;img src="intro.png" width="1255" /&gt;
+]
+
+---
+
+# Agenda
+
+1. La evaluación de impacto en ciencias sociales
+
+1. Aplicación del Proyecto Esperanza
+
+  - Formulación de la hipótesis
+
+  - Diseño e implementación del estudio
+
+  - Metodología
+
+  - Resultados
+  
+1. ¿Por qué usar R en evaluación?
+
+1. Reflexiones finales
+
+
+---
+
+class: inverse, middle, center
+
+# La evaluación de impacto en ciencias sociales
+
+---
+
+# ¿Por qué evaluar?
+
+Comprobar la teoría económica
+
+Efectividad de políticas públicas
+
+Competencia por fondos
+
+Introducción de productos y servicios
+
+---
+
+# Causalidad y evaluación de políticas
+
+Los diseños experimentales han puesto pie firme como el *gold standard* para la evaluación de políticas
+
+Los investigadores pelean por fondos de gobiernos, ONGs y *think tanks* para evaluar políticas realizando asignaciones experimentales de tratamientos
+
+Esther Duflo, Michael Kremer y Abhijit Banerjee ganaron el Nobel de Economía en 2019 por sus contribuciones a la lucha contra la pobreza, donde los experimentos tienen un papel primordial
+
+El modelo de causal de Rubin o de *resultados potenciales* permite conceptualizar la mayoría de los problemas de evaluación pensando en qué *resultado* obtendría una unidad con y sin intervención
+
+Sin embargo, el **problema fundamental de la inferencia causal** implica que solo podemos observar a cada unidad en uno de los estados posibles
+
+---
+
+# La revolución de la credibilidad
+
+La atención pasa de *el modelo* a *la relación causal*
+
+&lt;br/&gt;
+
+Diseño de estrategias empíricas que buscan emular lo que hubiera sido un experimento
+
+&lt;br/&gt;
+
+Énfasis en *la estrategia de identificación*
+
+&lt;br/&gt;
+
+La econometría por sí sola no da la identificación
+
+&lt;br/&gt;
+
+Incluso la econometría más refinada no resuleve el problema de un mal diseño
+
+&lt;br/&gt;
+
+
+---
+
+# Nobel de Economía 2021 para Card, Angrist e Imbens
+
+
+.pull-left[
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="http://rioarriba.mx/public/images/articulos/article-2a85ae1c4138f859e0fbd745501a1f4e.jpg" alt="Fuente: [Sitio oficial del Premio Nobel](https://www.nobelprize.org/prizes/economic-sciences/2021/summary/)" width="50%" /&gt;
+&lt;p class="caption"&gt;Fuente: [Sitio oficial del Premio Nobel](https://www.nobelprize.org/prizes/economic-sciences/2021/summary/)&lt;/p&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+Usar la teoría económica para plantear relaciones causales de interés y diseñar estrategias que permitan aislar las relaciones causales, una a la vez
+
+Contribuciones a varios niveles
+
+- Compración y contrastación de la teoría
+
+- Diseño de estrategias para estimar relaciones causales
+
+- Refinamiento estadístico de los métodos que usamos
+
+Si falta un elemento, los otos dos no se sostienen solos
+]
+
+---
+
+class: inverse, middle, center
+
+# Aplicación del Proyecto Esperanza
+
+---
+
+class: inverse, middle, center
+
+# 1. Formulación de una hipótesis
+
+---
+
+# La esperanza importa
+
+Banerjee et al. (2015): las microfinanzas pueden funcionar para algunos, pero no para todos
+
+Duflo (2012): la esperanza importa
+
+Multiples lecciones de la economía del comportamiento
+
+- Sistemas duales
+- Puntos de referencia y aversión a la pérdida
+- Carencia de auto control
+- Normas
+
+En esta presentación hablaré sobre un estudio basado en estas ideas
+
+Rojas, Wydick and Lybbert (2021), [Can hope elevate microfinance? Evidence from Oaxaca, Mexico]((https://academic.oup.com/oep/article/74/1/236/6154385?login=true)), *Oxford Economic Papers*
+
+---
+
+# Un modelo de la esperanza
+
+Concepto de esperanza de la teoría de Snyder (1993)
+
+- Aspiraciones
+
+- Avenidas
+
+- Habilidades
+
+Diferencia a la esperanza *deseosa* de la **esperanza aspiracional**
+
+Operacionalizamos estos conceptos en un modelo microeconómico
+
+- Aspiraciones: modeladas con una función de utilidad que depende de un punto de referencia (aspiración)
+
+- Avenidas: modeladas con una función de producción con restricciones
+
+- Habilidad: modelada con la productividad marginal del esfuerzo
+
+Ver [Wydick y Lybbert (2018)](https://www.journals.uchicago.edu/doi/full/10.1086/696968)
+
+---
+
+# Modelo microeconómico
+
+El problema de cada individuo es
+
+`$$\max_{\{e_{t}\}} U_{t+1}=E(u_{t+1})-c(e_t)$$`
+Sujeto a
+
+`\(Y_{t+1}=\pi e_t  + \pi_{\nu} \nu_{t+1}\)`
+
+
+`\(E(Y_{t+1})= \begin{cases} \pi e_t, &amp; \text{si } e_t &lt; \bar{e} \\ \bar{Y}, &amp; \text{si } e_t \geq \bar{e} \\ \end{cases}\)`
+
+`\(u=A\left(\frac{Y}{A}\right)^\frac{1}{1-\alpha} \mathcal{1}(Y&lt;A) + A\left(\frac{Y}{A}\right)^{1-\alpha} \mathcal{1}(Y\geq A)\)`
+
+`\(\pi \bar{e}=\bar{Y}\)`
+
+
+`\(\nu_{t+1} \sim \mathcal{N}(0,\,\sigma^{2})\)`
+
+`\(\alpha \in[0,\,1]\)`
+
+
+---
+
+class: inverse, middle, center
+
+# 2. Diseño e implementación del estudio
+
+---
+
+# Proyecto Esperanza en Oaxacca
+
+Colaboración con *Fuentes Libres*, una ONG cristiana
+
+Fuentes opera en el Valle de Oaxaca y en el Istmo de Tehuantepec
+
+En el momento del estudio tenía 52 grupos de ahorro y crédito (*bancos*)
+
+Aleatorizamos un tratamiento en parejas de bancos que tenían características similares
+
+- Localización
+- Oficial de banco
+- Tipos de negocio
+- Tamaño
+- Edad promedio
+
+En cada pareja, un banco es asignado a tratamiento y otro a control
+
+Tratamiento con tres componentes
+---
+
+# Documental *Historias de Esperanza*
+
+.center[
+&lt;iframe width="800" height="470" src="https://www.youtube.com/embed/gAidmWKCCD0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
+]
+
+---
+
+# Documental *Historias de Esperanza*
+
+.center[
+&lt;img src="screenshot_doc.jpg" width="5040" /&gt;
+]
+---
+
+# Ejercicio de fijación de metas
+
+.center[
+&lt;img src="magnet.png" width="1636" /&gt;
+]
+---
+
+# Mini curso de fijación de conceptos
+
+.center[
+&lt;img src="curriculum_session.jpg" width="80%" /&gt;
+]
+
+
+---
+
+# Valle de Oaxaca
+
+.pull-left[
+![](http://oaxacahope-project.weebly.com/uploads/8/0/9/9/80995658/groups-map-a-comp_orig.jpg)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](http://oaxacahope-project.weebly.com/uploads/8/0/9/9/80995658/groups-map-b-comp_orig.jpg)&lt;!-- --&gt;
+
+]
+
+
+---
+
+# Istmo de Tehuantepec
+
+
+
+.pull-left[
+![](http://oaxacahope-project.weebly.com/uploads/8/0/9/9/80995658/groups-map-d-comp_orig.jpg)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](http://oaxacahope-project.weebly.com/uploads/8/0/9/9/80995658/groups-map-c-comp_orig.jpg)&lt;!-- --&gt;![](http://oaxacahope-project.weebly.com/uploads/8/0/9/9/80995658/groups-map-e-comp_orig.png)&lt;!-- --&gt;
+
+]
+
+---
+
+# Datos
+
+Se recolecataron datos de cada socia en tres puntos del tiempo
+
+- En la línea base
+- Un mes después de la intervención
+- Un año después de la intervención
+
+Construimos índices de cada una de las dimensiones de la esperanza
+
+Por ejemplo, para el índice de agencia, pedimos a cada socia que evaluara del 0 al 10 las siguientes expresiones:
+- ¿Qué tan importante es el trabajo duro para los negocios?
+- ¿Qué tan importante es la suerte para los negocios?
+- Mi futuro está determinado por mis propias acciones y no por las de otros
+- Es difícil para personas como yo ser líderes en la comunidad
+- Mujeres como yo pueden tener un impacto positivo en nuestra comunidad
+
+Recolectamos información sobre los negocios de las socias
+
+Tuvimos acceso a registros administrativos sobre ahorro y crédito
+
+---
+
+class: inverse, middle, center
+
+# 3. Metodología
+
+---
+
+# Integridad del diseño
+
+Para obtener un estimador consistente del efecto del tratamiento se debe cumplir que aquellas socias que recibieron la intervención son estadísticamente iguales a las socias que no la recibieron
+
+Se colectaron las siguientes características en la línea base y se verificó que fueran estadísticamente iguales entre el grupo tratado y el de control
+
+.pull-left[
+**Características predeterminadas**
+- Edad
+- Educación
+- Religión
+- Número de hijos
+- Líder del grupo
+- Tipo de negocio
+]
+
+.pull-right[
+**Variables de resultados**
+- Índice de aspiraciones
+- Índice de agencia
+- Índice de avenidas
+- Felicidad
+- Optimismo
+- Orientación al futuro
+- Aversión al riesgo
+- Horas trabajadas
+- Ventas
+- Ganancias
+- Ahorros
+- Empleados
+
+]
+
+---
+
+# Efecto del tratamiento
+
+Si la aleatorización fue exitosa, el efecto del tratamiento puede obtenerse comparando las variables de resultados entre el grupo de tratamiento y control, usando los datos de seguimiento, un año después de la intervención
+
+Lo anterior puede ser realizado con una regresión
+
+`$$y_{ij}=\alpha + \tau HopeGroup_j + X_i'\beta + \gamma D_p + \varepsilon_{i,t}$$`
+donde
+
+`\(y_{ij}\)` es la variable de impacto
+
+`\(HopeGroup_j\)` toma el valor de uno para las socias en el grupo de tratamiento y cero para las del grupo de control
+
+`\(X_i\)` son las características predeterminadas (ayudan a mejorar la precisión de la estimación)
+
+`\(D_p\)` es un indicador de las parejas
+
+Los errores estándar están agrupados a nivel banco
+
+
+---
+
+# ANCOVA
+
+[McKenzie (2015)](https://www.sciencedirect.com/science/article/pii/S030438781200003X) estudia las implicaciones de recabar y analizar datos cuando las variables de impacto no tienen una alta correlación serial
+
+Con baja correlación serial, un estimador ANCOVA incrementa la precisión (entre [otros beneficios](https://blogs.worldbank.org/impactevaluations/collecting-more-rounds-of-data-to-boost-power-the-new-stuff))
+
+En el análisis extendemos la ecuación a estimar como
+
+`$$y_{ij}=\alpha + \tau HopeGroup_j + X_i'\beta + \alpha_1 y_{ij,0} + \alpha_2 My_{ij,0}+ \gamma D_p + \varepsilon_{i,t}$$`
+
+donde
+
+`\(y_{ij,0}\)` es el valor de la variable de impacto en la línea base
+
+
+`\(My_{ij,0}\)` es igual a 1 si el valor de la variable de impacto en la línea base es faltante y cero en otro caso
+
+Los errores estándar están agrupados a nivel banco
+
+
+---
+
+# Inferencia por aleatorización
+
+Es un [método para calcular los valores `\(p\)`](https://jasonkerwin.com/nonparibus/2017/09/25/randomization-inference-vs-bootstrapping-p-values/) en una prueba de hipótesis
+
+En un experimento, sabemos qué unidades son asignadas a tratamiento y control y por medio de qué mecanismo
+
+Inferencia por aleatorización considera **qué hubiera pasado** bajo **todas** las posibles asignaciones aleatorias, no solo la que se llevó a cabo en el experimento
+
+El procedimiento se basa en la idea de que el efecto observado. `\(\beta_T\)`, puede ser debido no al tratamiento, sino simplemente a qué grupos fueron asignados a tratamiento y a control
+
+Algoritmo:
+
+2. Reasignar el tratamiento con el mismo procedimiento que como ocurrió en el experimento
+3. Reestimar `\(\beta_{T,s}\)` con la asignación de 1
+4. Repetir 1 y 2 `\(S\)` veces (1,000 quizás)
+5. Comparar `\(\beta_T\)` con la distribución de los `\(\beta_{T,s}\)` y preguntárnos, ¿qué tan común o anormal es el `\(\beta_T\)` estimado con la muestra del experimento?
+
+---
+
+class: inverse, middle, center
+
+# 4. Resultados
+
+---
+
+# Un vistazo a los efectos del tratamiento
+
+
+![](http://oaxacahope-project.weebly.com/uploads/8/0/9/9/80995658/ancova-combined_orig.png)&lt;!-- --&gt;
+
+Nota: Efectos en las variables de impacto estandarizadas
+
+---
+
+# Resumen de los resultados
+
+Los datos respaldan la hipótesis de una función de utilidad que depende de las aspiraciones (ver artículo)
+
+Hay un efecto positivo del tratamiento sobre las aspiraciones en el corto plazo
+
+La agencia y las agenidas responden lentamente, pero se desplazan significativamente después de un año
+
+Hay un efecto del tratamiento sobre el índice de desempeño de negocios (explicado por el número de empleados)
+
+Hay un efecto significantivo del tratamiento en la sobrevivencia de los bancos (ver artículo)
+
+---
+
+# El balance
+
+Para estimar de forma consistente el efecto del tratamiento debe suceder que la asignación al tratamiento sea independiente de las características de las socias en la línea base
+
+Veamos la media de la educación de quienes recibieron y no recibieron el tratamiento
+
+
+Podemos hacer uso de una regresión lineal para hacer exactamente lo mismo
+
+`$$educ_i=\gamma_0 + \gamma_1 HopeGroup_i + e_i$$`
+
+---
+
+# El balance
+
+
+
+
+&lt;table style="NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto;" class="table"&gt;
+&lt;caption&gt;Balance de características observables en línea base&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Media &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Hope Group &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Edad &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 40.996*** &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.624* &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.742) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (1.343) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Educación &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 7.314*** &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.555 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.452) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.596) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Prop. evangélica &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.279*** &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; −0.068 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.047) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.062) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Hijos &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.911*** &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.109 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.170) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.216) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Líder &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.283*** &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; −0.024 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.024) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.028) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;&lt;/sup&gt; * p &amp;lt; 0.1, ** p &amp;lt; 0.05, *** p &amp;lt; 0.01&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+---
+
+# El efecto del tratamiento
+
+Si el supuesto de independencia se cumple, el efecto del tratamiento en una variable `\(y\)` puede ser identificado simplmente al comparar `\(y\)` para tratados y no tratados **después de la intervención**
+
+Sabemos que podemos hacer esto con una regresión como sigue
+
+`$$y_{ij}=\alpha + \tau HopeGroup_j + X_i'\beta + \alpha_1 y_{ij,0} + \alpha_2 My_{ij,0}+ \gamma D_p + \varepsilon_{i,t}$$`
+
+donde `\(X_i\)` representa un vector de características que explican `\(y_i\)`, pero que no fueron afectadas por el tratamiento
+
+
+
+---
+
+# El efecto del tratamiento
+
+Efectos positivos en los componentes del índice de esperanza después de 1 y 12 meses
+
+Nuestro experimento nos permite capturar parte de la dinámica del movimiento en los componentes de la esperanza
+
+Efectos positivos en el desempeño de los negocios después de 12 meses
+
+
+&lt;table style="NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto;" class="table"&gt;
+&lt;caption&gt;Efectos de tratamiento después de 1 y 12 meses&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Aspiraciones &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Agencia &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Avenidas &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Hope 3 &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Negocios &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Efecto de tratamiento (1 mes) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.266*** &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.042 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.044 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.175** &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.012 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.082) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.063) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.083) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.071) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.072) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Efecto de tratamiento (12 meses) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.021 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.146** &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.166** &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.140** &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.184*** &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.066) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.068) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.071) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.067) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; (0.060) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;&lt;/sup&gt; * p &amp;lt; 0.1, ** p &amp;lt; 0.05, *** p &amp;lt; 0.01&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+
+
+---
+
+# Inferencia por aleatorización
+
+Declaramos la estructura del experimento
+
+- Clusters: bancos
+- Bloques: parejas
+
+La función *conduct_ri* realiza la asignación y la estimación en cada una de las `\(s\)` repeticiones
+
+
+```r
+set.seed(322)
+
+df &lt;- filter(data, t!=0)
+
+declaration &lt;- 
+  with(df,{
+    declare_ra(
+      blocks = pair_number, # bloques = parejas
+      clusters = id_g, # clusters o grupos = bancos
+      )
+  })
+
+
+declaration
+
+ri &lt;- conduct_ri(
+  StdAnderAgencyIndex ~ hopegroup*followup1 + hopegroup*followup2 + followup2 ,
+  assignment = "hopegroup",
+  sharp_hypothesis = 0,
+  declaration = declaration,
+  data = df,
+  sims = 1000
+)
+
+summary(ri)
+```
+
+El valor `\(p\)` es de 0.077
+
+Esto contrasta con el valor `\(p\)` obtenido de forma tradicional de 0.06
+
+---
+
+class: inverse, middle, center
+
+# ¿Por qué usar R en evaluación?
+
+---
+
+# Aprender a usar R como una herramienta
+
+Transparencia en las decisiones
+ - Limpieza de datos
+ - Erróres estándar
+ - Especificaciones
+
+Adaptación al código de técnicas nuevas por una comunidad abierta
+
+Combinación del análisis con la producción de reportes
+  - *bookdown* para libros o artículos
+  - *blogdown* para páginas web
+  - *xaringan* para presentaciones (como esta que están viendo)
+  - *shiny* para tableros en internet
+
+Integración con herramientas de control de versiones, como GitHub
+ - Colaboración en equipos
+ - Transparencia y reproducibilidad
+
+---
+
+class: inverse, middle, center
+
+# Reflexiones finales
+
+---
+
+# Reflexiones finales
+
+1. Evaluar es importante
+
+1. Conozcan su teoría
+
+1. Cuiden su diseño
+
+1. Conozcan sus herramientas
+
+---
+
+class: center, middle, inverse
+
+# ¡Gracias!
+
+.author[
+### [rojasirvin.com](https://www.rojasirvin.com/) &lt;br&gt; [&lt;i class="fab fa-github"&gt;&lt;/i&gt;](https://github.com/rojasirvin) [&lt;i class="fab fa-twitter"&gt;&lt;/i&gt;](https://twitter.com/RojasIrvin) [&lt;i class="ai ai-google-scholar"&gt;&lt;/i&gt;](https://scholar.google.com/citations?user=FUwdSTMAAAAJ&amp;hl=en)
+]
+
+&lt;br/&gt;
+
+&lt;br/&gt;
+
+
+Presentación creada usando el paquete [**xaringan**](https://github.com/yihui/xaringan) en R.
+
+El chakra viene de [remark.js](https://remarkjs.com), [**knitr**](https://yihui.org/knitr/), y [R Markdown](https://rmarkdown.rstudio.com).
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
