@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Evaluación Experimental</title>
+    <title>Uso de R para la evaluación de impacto</title>
     <meta charset="utf-8" />
     <meta name="date" content="2022-10-05" />
     <script src="libs/header-attrs-2.16/header-attrs.js"></script>
@@ -42,13 +42,11 @@ class: title-slide, inverse, center, middle
 ### Irvin Rojas &lt;br&gt; [rojasirvin.com](https://www.rojasirvin.com/) &lt;br&gt; [&lt;i class="fab fa-github"&gt;&lt;/i&gt;](https://github.com/rojasirvin) [&lt;i class="fab fa-twitter"&gt;&lt;/i&gt;](https://twitter.com/RojasIrvin) [&lt;i class="ai ai-google-scholar"&gt;&lt;/i&gt;](https://scholar.google.com/citations?user=FUwdSTMAAAAJ&amp;hl=en)
 ]
 
-&lt;br/&gt;
-
 .affiliation[
 ### Centro de Investigación y Docencia Económicas &lt;br&gt; División de Economía  &lt;br&gt;  &lt;br&gt; Actualización: 2022-10-05
 ]
 
-**Simposio – Taller _Uso y aplicación de R en estudios sociales, económicos y de innovación_**
+_Uso y aplicación de R en estudios sociales, económicos y de innovación_
 
 ---
 
@@ -141,10 +139,7 @@ Incluso la econometría más refinada no resuleve el problema de un mal diseño
 
 .pull-left[
 
-&lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="http://rioarriba.mx/public/images/articulos/article-2a85ae1c4138f859e0fbd745501a1f4e.jpg" alt="Fuente: [Sitio oficial del Premio Nobel](https://www.nobelprize.org/prizes/economic-sciences/2021/summary/)" width="50%" /&gt;
-&lt;p class="caption"&gt;Fuente: [Sitio oficial del Premio Nobel](https://www.nobelprize.org/prizes/economic-sciences/2021/summary/)&lt;/p&gt;
-&lt;/div&gt;
+&lt;img src="http://rioarriba.mx/public/images/articulos/article-2a85ae1c4138f859e0fbd745501a1f4e.jpg" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 .pull-right[
@@ -647,7 +642,20 @@ Efectos positivos en el desempeño de los negocios después de 12 meses
 
 # Inferencia por aleatorización
 
-Declaramos la estructura del experimento
+Consideremos el efecto en el índice Hope 3 **StdAnderHope3Index**
+
+Con el modelo de regresión lineal e inferencia tradicional (con errores agrupados) obtenemos:
+
+
+```
+##   Estimate Std. Error    t value   Pr(&gt;|t|) 
+## 0.13987602 0.06717779 2.08217650 0.04236186
+```
+---
+
+# Inferencia por aleatorización
+
+Declaramos la estructura del experimento: reasignar aleatoriamente **hopegroup**
 
 - Clusters: bancos
 - Bloques: parejas
@@ -655,37 +663,25 @@ Declaramos la estructura del experimento
 La función *conduct_ri* realiza la asignación y la estimación en cada una de las `\(s\)` repeticiones
 
 
-```r
-set.seed(322)
-
-df &lt;- filter(data, t!=0)
-
-declaration &lt;- 
-  with(df,{
-    declare_ra(
-      blocks = pair_number, # bloques = parejas
-      clusters = id_g, # clusters o grupos = bancos
-      )
-  })
 
 
-declaration
-
-ri &lt;- conduct_ri(
-  StdAnderAgencyIndex ~ hopegroup*followup1 + hopegroup*followup2 + followup2 ,
-  assignment = "hopegroup",
-  sharp_hypothesis = 0,
-  declaration = declaration,
-  data = df,
-  sims = 1000
-)
-
-summary(ri)
+```
+## Random assignment procedure: Blocked and clustered random assignment 
+## Number of units: 1333 
+## Number of blocks: 26
+## Number of clusters: 52
+## Number of treatment arms: 2 
+## The possible treatment categories are 0 and 1.
+## The number of possible random assignments is 67108864.  
+## The probabilities of assignment are constant across units: 
+## prob_0 prob_1 
+##    0.5    0.5
 ```
 
-El valor `\(p\)` es de 0.077
-
-Esto contrasta con el valor `\(p\)` obtenido de forma tradicional de 0.06
+```
+##                    term estimate two_tailed_p_value
+## 1 Custom Test Statistic 0.139876              0.106
+```
 
 ---
 

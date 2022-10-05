@@ -1,5 +1,5 @@
 ---
-title: "Evaluación Experimental"
+title: "Uso de R para la evaluación de impacto"
 subtitle: "Una aplicación del Proyecto Esperanza en Oaxaca"
 author: |
   | Irvin Rojas
@@ -55,13 +55,11 @@ xfun::pkg_load2(c('base64enc', 'htmltools', 'mime'))
 ### Irvin Rojas <br> [rojasirvin.com](https://www.rojasirvin.com/) <br> [<i class="fab fa-github"></i>](https://github.com/rojasirvin) [<i class="fab fa-twitter"></i>](https://twitter.com/RojasIrvin) [<i class="ai ai-google-scholar"></i>](https://scholar.google.com/citations?user=FUwdSTMAAAAJ&hl=en)
 ]
 
-<br/>
-
 .affiliation[
 ### Centro de Investigación y Docencia Económicas <br> División de Economía  <br>  <br> Actualización: `r Sys.Date()`
 ]
 
-**Simposio - Taller _Uso y aplicación de R en estudios sociales, económicos y de innovación_**
+_Uso y aplicación de R en estudios sociales, económicos y de innovación_
 
 ---
 
@@ -156,7 +154,7 @@ Incluso la econometría más refinada no resuleve el problema de un mal diseño
 
 .pull-left[
 
-```{r, echo=FALSE, out.width="50%", fig.cap="Fuente: [Sitio oficial del Premio Nobel](https://www.nobelprize.org/prizes/economic-sciences/2021/summary/)", fig.align = 'center'}
+```{r, echo=FALSE, out.width="100%", fig.align = 'center'}
 knitr::include_graphics("http://rioarriba.mx/public/images/articulos/article-2a85ae1c4138f859e0fbd745501a1f4e.jpg")
 ```
 ]
@@ -667,14 +665,34 @@ modelsummary::modelsummary(effects,
 
 # Inferencia por aleatorización
 
-Declaramos la estructura del experimento
+Consideremos el efecto en el índice Hope 3 **StdAnderHope3Index**
+
+Con el modelo de regresión lineal e inferencia tradicional (con errores agrupados) obtenemos:
+
+```{r echo=F, eval=T, cache=T}
+summary(lm_robust(StdAnderHope3Index ~ hopegroup:followup1 + hopegroup:followup2 + followup2 +
+                              age + educ + evangelical + children + children_under_18 + bankleader + Dwelling_Index +
+                          factor(pair_number) + factor(type_of_business) +
+                          Baseline_StdAnderHope3Index +
+                          M_Baseline_StdAnderHope3Index,
+                               clusters = communitybank,
+                               se_type = "stata",
+                               data = filter(data,t!=0)))$coef[43,1:4]
+```
+---
+
+# Inferencia por aleatorización
+
+Declaramos la estructura del experimento: reasignar aleatoriamente **hopegroup**
 
 - Clusters: bancos
 - Bloques: parejas
 
 La función *conduct_ri* realiza la asignación y la estimación en cada una de las $s$ repeticiones
 
-```{r echo=T, eval=F}
+
+
+```{r echo=F, eval=T, cache=T}
 set.seed(322)
 
 df <- filter(data, t!=0)
@@ -690,8 +708,23 @@ declaration <-
 
 declaration
 
+
+balance_fun <- function(data) {
+    test_stat <- summary(lm_robust(StdAnderHope3Index ~ hopegroup:followup1 + hopegroup:followup2 + followup2 +
+                              age + educ + evangelical + children + children_under_18 + bankleader + Dwelling_Index +
+                          factor(pair_number) + factor(type_of_business) +
+                          Baseline_StdAnderHope3Index +
+                          M_Baseline_StdAnderHope3Index,
+                  clusters = communitybank,
+                  se_type = "stata",
+                  data = filter(data,t!=0)))$coef[43,1]
+    names(test_stat) <- NULL
+    return(test_stat)
+}
+
+
 ri <- conduct_ri(
-  StdAnderAgencyIndex ~ hopegroup*followup1 + hopegroup*followup2 + followup2 ,
+  test_function = balance_fun,
   assignment = "hopegroup",
   sharp_hypothesis = 0,
   declaration = declaration,
@@ -701,10 +734,6 @@ ri <- conduct_ri(
 
 summary(ri)
 ```
-
-El valor $p$ es de 0.077
-
-Esto contrasta con el valor $p$ obtenido de forma tradicional de 0.06
 
 ---
 
